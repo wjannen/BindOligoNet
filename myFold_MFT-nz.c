@@ -3,6 +3,7 @@
 #include <math.h>
 #include <ctype.h>
 
+// TODO: these files appear to be identical.
 #ifdef DNA
 #include "myFold_newpen_DNA.h"
 #else
@@ -24,6 +25,10 @@
 
 extern int nucenergy[6];
 extern int g0;
+
+int affinePent (int a, int b );
+int retnucenergy ( int a );
+int valid_pair(int i,int j);
 
 void setup(void) {
 	int i,j;
@@ -902,12 +907,12 @@ void get_stack_energies() {
 	*/
 	FILE *filestack,  *filetstack, *filetstacki;
 
-	char * wd;
-	char * path = malloc(strlen(getenv("BINPATH")) + 20);
-
-	if(wd = getenv("BINPATH")) {
+	char * wd = getenv("BINPATH");
+	if(wd != NULL) {
+		char * path = malloc(strlen(wd) + 20);
 		stackstrcat(BINPREFIX "stack.bin",path);
-		if(filestack = fopen(path,"r")) {
+		filestack = fopen(path,"r");
+		if(filestack != NULL) {
 			temp = fread(&stack_energy, sizeof(int), count, filestack);
 			if(temp != count)
 				printf("Only wrote %d elements of stack\n",temp);
@@ -918,7 +923,8 @@ void get_stack_energies() {
 		}
 
 		stackstrcat(BINPREFIX "tstack.bin",path);
-		if(filetstack = fopen(path,"r")) {
+		filetstack = fopen(path,"r");
+		if(filetstack != NULL) {
 			temp = fread(&tstack_energy, sizeof(int), 6*6*6*6, filetstack);
 			if(temp != count)
 				printf("Only wrote %d elements of tstack\n",temp);
@@ -929,7 +935,8 @@ void get_stack_energies() {
 		}
 
 		stackstrcat(BINPREFIX "tstacki.bin",path);
-		if(filetstacki = fopen(path,"r")) {
+		filetstacki = fopen(path,"r");
+		if(filetstacki != NULL) {
 			temp = fread(&tstacki_energy, sizeof(int), 6*6*6*6, filetstacki);
 			if(temp != count)
 				printf("Only wrote %d elements of tstacki\n",temp);
@@ -947,12 +954,11 @@ void get_stack_energies() {
 				tstack_energy[5][5][i][j] = 0;
 			}
 		}
+		free(path);
 	} else {
 		printf("Thermodynamic datatable directory environment variable not set.  Please run export BINPATH=\"/path/to/datatables/\"\n");
 		exit(1);
 	}
-
-	free(path);
 }
 
 /*
@@ -964,12 +970,14 @@ void get_iloop_energies(){
 
 	FILE* file1x1, *file2x2, *file2x1;
 
-	char * wd;
-	char * path = malloc(strlen(getenv("BINPATH")) + 20);
+	char * wd = getenv("BINPATH");
 
-	if(wd = getenv("BINPATH")) {
+	if(wd != NULL) {
+		char * path = malloc(strlen(wd) + 20);
 		stackstrcat(BINPREFIX "int1x1.bin",path);
-		if(file1x1 = fopen(path,"r")) {
+
+		file1x1 = fopen(path,"r");
+		if(file1x1 != NULL) {
 			count = 6*6*6*6*6*6;	 //1x1 is 6*6*6*6*6*6 ints
 			temp = fread(&iloop11, sizeof(int), count, file1x1);
 			if(temp != count)
@@ -981,7 +989,8 @@ void get_iloop_energies(){
 		}
 
 		stackstrcat(BINPREFIX "int2x2.bin",path);
-		if(file2x2 = fopen(path,"r")) {
+		file2x2 = fopen(path,"r");
+		if(file2x2 != NULL) {
 			count = 6*6*6*6*6*6*6*6; //2x2 is 6*6*6*6*6*6*6*6 ints
 			temp = fread(&iloop22, sizeof(int), count, file2x2);
 			if(temp != count)
@@ -993,7 +1002,8 @@ void get_iloop_energies(){
 		}
 
 		stackstrcat(BINPREFIX "int2x1.bin",path);
-		if(file2x1 = fopen(path,"r")) {
+		file2x1 = fopen(path,"r");
+		if(file2x1 != NULL) {
 			count = 6*6*6*6*6*6*6;   //2x1 is 6*6*6*6*6*6*6 ints
 			temp = fread(&iloop21, sizeof(int), count, file2x1);
 			if(temp != count)
@@ -1003,6 +1013,7 @@ void get_iloop_energies(){
 			printf("Could not open internal 2x1 loop binary (int2x1.bin) for reading!\n");
 			exit(1);
 		}
+		free(path);
 	} else {
 		printf("Thermodynamic datatable location environment variable not set.  Please cd to this directory and run ./binset, or run export BINPATH=\"/path/to/datatables/\"\n");
 		exit(1);
