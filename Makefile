@@ -13,5 +13,5 @@ all: bindoligo bindoligod
 bindoligo: bindoligo.c
 	$(CC) $(CFLAGS) -o bindoligo bindoligo.c $(LFLAGS)
 
-bindoligod: bindoligo-D.c
-	$(CC) $(CFLAGS) -o bindoligo-D bindoligo-D.c $(LFLAGS)
+bindoligod: bindoligo.c
+	$(CC) $(CFLAGS) -D DNA -o bindoligo-D bindoligo.c $(LFLAGS)

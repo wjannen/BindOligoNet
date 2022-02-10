@@ -37,7 +37,11 @@ modified by Julian M. Hess, 2011-2012
 
 #define THRESH -410 - g0
 
+#ifdef DNA
+#define USAGE "Usage: bindoligo-D <options> [s sequence] [t sequence]\n"
+#else
 #define USAGE "Usage: bindoligo <options> [s sequence] [t sequence]\n"
+#endif
 
 //GLOBAL VARIABLES
 
@@ -73,7 +77,12 @@ int mftbool = 1; //whether we calculate dG for secondary structure removal.  1 =
 
 int custbool = 0; //whether user has specified custom parameters
 
+#ifdef DNA
+int nucenergy[6] = {-2,24,52,4,0,0}; //DNA
+#else
 int nucenergy[6] = {-23,48,94,16,0,0}; //RNA
+#endif
+
 
 int g0;
 int meanpen;
@@ -779,13 +788,22 @@ int main(int argc, char **argv){
 					case '5':
 						mftbool = 1;
 						dynpen = 1;
+#ifdef DNA
+						g0 = 114; //DNA
+#else
 						g0 = 160; //RNA
+#endif
 						break;
 					case '2':
 						mftbool = 1;
 						dynpen = 0;
+#ifdef DNA
+						meanpen = 21; //DNA
+						g0 = 114; //DNA
+#else
 						meanpen = 34; //RNA
 						g0 = 160; //RNA
+#endif
 						break;
 					case '0':
 						mftbool = 0;
