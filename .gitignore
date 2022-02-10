@@ -1,0 +1,11 @@
+# Backup files
+*~
+
+# auto-generated files
+
+## macOS junk
+.DS\_Store
+
+## programs
+bindoligo
+bindoligo-D
