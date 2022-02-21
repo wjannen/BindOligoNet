@@ -260,9 +260,8 @@ of an allocated strcut traceback.)
 int traceback (int i, int j, struct traceback *x, int tfill) {
 	int k;
 
-	int the_min_i = 0;
-	int the_min_j = 0;
-
+//	int the_min_i = 0;
+//	int the_min_j = 0;
 
 	//prep alignment
 	len_align = 0;
@@ -282,13 +281,13 @@ int traceback (int i, int j, struct traceback *x, int tfill) {
 		//calculate first column of F_M
 		for(k=DUMMY_LENGTH;k<=len_t+DUMMY_LENGTH+1;k++) {
 			if(!isspace(aligned_t[k])) {
-				the_min_j = k;
+//				the_min_j = k;
 				break;
 			}
 		}
 		for(k=0;k<=len_t+DUMMY_LENGTH+1;k++) {
 			if(!isspace(aligned_s[k])) {
-				the_min_i = k;
+//				the_min_i = k;
 				break;
 			}
 		}
@@ -323,15 +322,11 @@ Also used for finding average binding energy at consensus site,
 and for binding footprint calculations.
 */
 void precompute_traceback(FILE * out, int run) {
-	int i,j,k;
-	int loopbool;
-	double num, denom;
-
 	double G = 0;
 	int the_max_fij = -9999;
 
-	for(i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
-		for(j = DUMMY_LENGTH + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
+	for(int i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
+		for(int j = DUMMY_LENGTH + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
 			if(f[i][j] < THRESH)
 				continue;
 
@@ -379,12 +374,11 @@ Actually calculates the occupational probability across entire sequence t for a 
 A brief note: should probably pick the best i, otherwise the calculation across an entire t becomes n^3
 */
 double p_occ (int jt, int mode, double pf) {
-	int i,j,k,l;
 	double occp = 0;
 
 	if (mode == SING_SING) {
-		for(i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
-			for(j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
+		for(int i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
+			for(int j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
 				if(f[i][j] < THRESH) //variable threshold?
 					continue;
 
@@ -399,10 +393,10 @@ double p_occ (int jt, int mode, double pf) {
 		}
 	} else if(mode == PROD_SUM) {
 		double num, denom;
-		for(j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
+		for(int j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
 			num = 0;
 			denom = 1;
-			for(i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
+			for(int i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
 				if(f[i][j] < THRESH)
 					continue;
 
@@ -424,8 +418,8 @@ double p_occ (int jt, int mode, double pf) {
 
 		//first factor
 		first = 0;
-		for(i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
-			for(j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
+		for(int i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
+			for(int j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
 				if(f[i][j] < THRESH)
 					continue;
 
@@ -435,8 +429,8 @@ double p_occ (int jt, int mode, double pf) {
 
 		//second/third factors
 		second = 0;
-		for(i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
-			for(j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
+		for(int i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++) {
+			for(int j = DUMMY_LENGTH + jt + 1; j <= len_t + DUMMY_LENGTH + 1; j++) {
 				if(j - DUMMY_LENGTH >= len_t - len_s)
 					//continue;
 
@@ -468,8 +462,8 @@ double p_occ (int jt, int mode, double pf) {
 			//find the single maximum entry in the scoring matrix.
 			the_max_i = 0;
 			the_max_j = 0;
-			for(i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++){
-				for( j = DUMMY_LENGTH + 1; j <= len_t + DUMMY_LENGTH + 1; j++){
+			for(int i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH + 1; i++){
+				for(int j = DUMMY_LENGTH + 1; j <= len_t + DUMMY_LENGTH + 1; j++){
 					if(f[i][j] > f[the_max_i][the_max_j]){
 						the_max_i = i;
 						the_max_j = j;
@@ -490,12 +484,12 @@ double p_occ (int jt, int mode, double pf) {
 		//traceback at each i,j has already been precomputed.
 
 		//i' -> ip, j' -> jp
-		for(i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH+1; i++) {
+		for(int i = DUMMY_LENGTH + 1; i <= len_s + DUMMY_LENGTH+1; i++) {
 			int bdyr = 0;
 			if(jt >= len_t - len_s)
 				bdyr = jt + len_s - len_t;
 
-			for(j= DUMMY_LENGTH + jt + 1; j <= DUMMY_LENGTH + jt + len_s + 1 - bdyr;j++) {
+			for(int j = DUMMY_LENGTH + jt + 1; j <= DUMMY_LENGTH + jt + len_s + 1 - bdyr;j++) {
 				if(f[i][j] < THRESH)
 					continue;
 
@@ -604,16 +598,15 @@ void print_alignment(FILE * dest) {
 }
 
 void struct_alloc() {
-	int i,j,k,l;
 
 	tb = (struct traceback **) malloc((len_s+2+DUMMY_LENGTH)*sizeof(struct traceback *)); //length of s
-	for(j = 0; j <= len_s + DUMMY_LENGTH + 1; j++) { //length of t
+	for(int j = 0; j <= len_s + DUMMY_LENGTH + 1; j++) { //length of t
 		tb[j] = (struct traceback *) malloc((len_t+2+DUMMY_LENGTH)*sizeof(struct traceback));
 	}
 
 	//we also have to allocate memory for the arrays within each structure.
-	for(j = 0; j <= len_s + DUMMY_LENGTH + 1; j++) {
-		for(l = 0; l <= len_t + DUMMY_LENGTH + 1; l++) {
+	for(int j = 0; j <= len_s + DUMMY_LENGTH + 1; j++) {
+		for(int l = 0; l <= len_t + DUMMY_LENGTH + 1; l++) {
 			tb[j][l].pocc = (int *) malloc((len_t+2*DUMMY_LENGTH+2)*sizeof(int));
 		}
 	}
@@ -630,13 +623,9 @@ void struct_alloc() {
 }
 
 void print_hotspots(FILE * out) {
-	int i,j;
-	int maxbuf;
-	double Z = 0;
-
 	precompute_traceback(out,1);
 
-	for(i = 0; i < len_t; i++)
+	for(int i = 0; i < len_t; i++)
 		fprintf(out,"%d: %c, %g\n",i + 1,num_to_base(t[DUMMY_LENGTH + len_t - (i + 1)]),(float) -dgJ[len_t - (i + 1)]/100);
 }
 
@@ -714,8 +703,8 @@ int main(int argc, char **argv){
 	char custstr[50]; //might want to make this dynamic?
 
 	//checks that options were actually given
-	int mbool = 0, obool = 0, fbool = 0, pbool = 0, Pbool = 0, gbool = 0, cbool = 0, sbool = 0, tbool = 0, dbool = 0;
-	while((l = getopt(argc, argv, "m:o:f:p:g:d:s:t:c:P:C:")) != -1) {
+	int mbool = 0, obool = 0, fbool = 0, pbool = 0, Pbool = 0, gbool = 0, cbool = 0, sbool = 0, tbool = 0; //, dbool = 0;
+	while((l = getopt(argc, argv, "m:o:f:p:g:s:t:c:P:C:")) != -1) { //d: removed since unused
 		switch(l) {
 			case 'm':
 				mbool = 1;
@@ -834,10 +823,10 @@ int main(int argc, char **argv){
 					exit(0);
 				}
 				break;
-			case 'd':
-				dbool = 1;
-				//will need switch statement here
-				break;
+//			case 'd':
+//				dbool = 1;
+//				//will need switch statement here
+//				break;
 			case 'c':
 				cbool = 1;
 				if(optarg) {
@@ -1048,7 +1037,8 @@ int main(int argc, char **argv){
 	FILE * output;
 	if(!strcmp(outputfile,"Magic_Value")) {
 		sprintf(farg,"rm %s",outputfile);
-		if(test = fopen(outputfile,"r")) { //remove file if it exists.
+		test = fopen(outputfile,"r");
+		if(test != NULL) { //remove file if it exists.
 			if(strcmp(outputfile,"/dev/null") != 0)
 				system(farg);
 			fclose(test);
