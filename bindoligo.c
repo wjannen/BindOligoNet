@@ -245,6 +245,9 @@ double dpf (int mode) {
 				}
 			}
 		}
+	} else {
+		fprintf(stderr, "unknown mode provided to pf function: %d\n", mode);
+		pf = -1;
 	}
 
 	return pf;
@@ -334,9 +337,9 @@ void precompute_traceback(FILE * out, int run) {
 				traceback(i,j,&tb[i][j],omode == HOTSPOTS ? 0 : 1);
 
 			if(dgout != NONE) {
-				if((dgout == SCRG)) { // && tb[i][j].gubool) {
+				if(dgout == SCRG) { // && tb[i][j].gubool) {
 					G += tb[i][j].dg;
-				} else if((dgout == BEST)) { // && tb[i][j].gubool) {
+				} else if(dgout == BEST) { // && tb[i][j].gubool) {
 					if(f[i][j] > the_max_fij)
 						the_max_fij = f[i][j];
 				}
@@ -522,15 +525,13 @@ double p_occ (int jt, int mode, double pf) {
 }
 
 char invcase(char base) {
-	char out;
+	char out = base;
 	if(isalpha(base)) {
 		if(islower(base)) {
 			out = toupper(base);
 		} else if(isupper(base)) {
 			out = tolower(base);
 		}
-	} else {
-		out = base;
 	}
 
 	return out;
